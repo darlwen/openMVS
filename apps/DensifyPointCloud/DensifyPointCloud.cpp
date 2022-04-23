@@ -248,6 +248,7 @@ void Finalize()
 
 int main(int argc, LPCTSTR* argv)
 {
+	#define _DEBUGINFO
 	#ifdef _DEBUGINFO
 	// set _crtBreakAlloc index to stop in <dbgheap.c> at allocation
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);// | _CRTDBG_CHECK_ALWAYS_DF);
