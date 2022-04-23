@@ -225,6 +225,7 @@ bool Initialize(size_t argc, LPCTSTR* argv)
 	MiniDumper::Create(APPNAME, WORKING_FOLDER);
 	#endif
 
+    std::cout << "Debug:  During Initialization" << std::endl;
 	Util::Init();
 	return true;
 }
