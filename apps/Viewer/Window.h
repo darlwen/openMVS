@@ -94,12 +94,8 @@ public:
 
 	typedef DELEGATE<bool (LPCTSTR, LPCTSTR)> ClbkOpenScene;
 	ClbkOpenScene clbkOpenScene;
-	typedef DELEGATE<bool (LPCTSTR, bool)> ClbkSaveScene;
-	ClbkSaveScene clbkSaveScene;
 	typedef DELEGATE<bool (LPCTSTR, LPCTSTR, bool)> ClbkExportScene;
 	ClbkExportScene clbkExportScene;
-	typedef DELEGATE<void (void)> ClbkCenterScene;
-	ClbkCenterScene clbkCenterScene;
 	typedef DELEGATE<void (const Ray3&, int)> ClbkRayScene;
 	ClbkRayScene clbkRayScene;
 	typedef DELEGATE<void (void)> ClbkCompilePointCloud;
@@ -108,8 +104,6 @@ public:
 	ClbkCompileMesh clbkCompileMesh;
 	typedef DELEGATE<void (void)> ClbkCompileBounds;
 	ClbkCompileBounds clbkCompileBounds;
-	typedef DELEGATE<void (void)> ClbkTogleSceneBox;
-	ClbkTogleSceneBox clbkTogleSceneBox;
 
 	typedef std::unordered_map<GLFWwindow*,Window*> WindowsMap;
 	static WindowsMap g_mapWindows;

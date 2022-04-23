@@ -13,7 +13,7 @@
 
 #include "Config.h"
 
-// macros controlling the verbosity
+// macors controling the verbosity
 #define TD_VERBOSE_OFF		0
 #define TD_VERBOSE_ON		1
 #define TD_VERBOSE_DEBUG	2

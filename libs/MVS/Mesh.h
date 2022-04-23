@@ -71,9 +71,6 @@ public:
 	typedef TPoint2<Type> TexCoord;
 	typedef cList<TexCoord,const TexCoord&,0,8192,FIndex> TexCoordArr;
 
-	typedef TPoint3<FIndex> FaceFaces;
-	typedef cList<FaceFaces,const FaceFaces&,0,8192,FIndex> FaceFacesArr;
-
 	// used to find adjacent face
 	struct FaceCount {
 		int count;
@@ -126,7 +123,6 @@ public:
 	BoolArr vertexBoundary; // for each vertex, stores if it is at the boundary or not (optional)
 
 	NormalArr faceNormals; // for each face, the normal to it (optional)
-	FaceFacesArr faceFaces; // for each face, the list of adjacent faces, NO_ID for border edges (optional)
 	TexCoordArr faceTexcoords; // for each face, the texture-coordinates corresponding to the contained vertices (optional)
 
 	Image8U3 textureDiffuse; // texture containing the diffuse color (optional)
@@ -136,16 +132,15 @@ public:
 	#endif
 
 public:
-	#ifdef _USE_CUDA
 	inline Mesh() {
-		InitKernels(CUDA::desiredDeviceID);
+		#ifdef _USE_CUDA
+		InitKernels();
+		#endif
 	}
-	#endif
 
 	void Release();
 	void ReleaseExtra();
 	void EmptyExtra();
-	void Swap(Mesh&);
 	inline bool IsEmpty() const { return vertices.IsEmpty(); }
 	inline bool HasTexture() const { ASSERT(faceTexcoords.IsEmpty() == textureDiffuse.empty()); return !faceTexcoords.IsEmpty(); }
 
@@ -155,7 +150,6 @@ public:
 
 	void ListIncidenteVertices();
 	void ListIncidenteFaces();
-	void ListIncidenteFaceFaces();
 	void ListBoundaryVertices();
 	void ComputeNormalFaces();
 	void ComputeNormalVertices();
@@ -167,7 +161,7 @@ public:
 	void GetAdjVertexFaces(VIndex, VIndex, FaceIdxArr&) const;
 
 	bool FixNonManifold();
-	void Clean(float fDecimate=0.7f, float fSpurious=10.f, bool bRemoveSpikes=true, unsigned nCloseHoles=30, unsigned nSmoothMesh=2, float fEdgeLength=0, bool bLastClean=true);
+	void Clean(float fDecimate=0.7f, float fSpurious=10.f, bool bRemoveSpikes=true, unsigned nCloseHoles=30, unsigned nSmoothMesh=2, bool bLastClean=true);
 
 	void EnsureEdgeSize(float minEdge=-0.5f, float maxEdge=-4.f, float collapseRatio=0.2, float degenerate_angle_deg=150, int mode=1, int max_iters=50);
 
@@ -205,7 +199,6 @@ public:
 
 	void Project(const Camera& camera, DepthMap& depthMap) const;
 	void Project(const Camera& camera, DepthMap& depthMap, Image8U3& image) const;
-	void Project(const Camera& camera, DepthMap& depthMap, NormalMap& normalMap) const;
 	void ProjectOrtho(const Camera& camera, DepthMap& depthMap) const;
 	void ProjectOrtho(const Camera& camera, DepthMap& depthMap, Image8U3& image) const;
 	void ProjectOrthoTopDown(unsigned resolution, Image8U3& image, Image8U& mask, Point3& center) const;

@@ -69,14 +69,11 @@ void Window::Release()
 
 void Window::ReleaseClbk()
 {
-	clbkSaveScene.reset();
 	clbkExportScene.reset();
-	clbkCenterScene.reset();
 	clbkRayScene.reset();
 	clbkCompilePointCloud.reset();
 	clbkCompileMesh.reset();
 	clbkCompileBounds.reset();
-	clbkTogleSceneBox.reset();
 }
 
 bool Window::Init(const cv::Size& _size, LPCTSTR name)
@@ -267,23 +264,14 @@ void Window::Key(int k, int /*scancode*/, int action, int mod)
 		}
 		break;
 	case GLFW_KEY_B:
-		if (action == GLFW_RELEASE) {
-			if (mod & GLFW_MOD_SHIFT) {
-				if (clbkTogleSceneBox != NULL)
-					clbkTogleSceneBox();
-			} else {
-				if (clbkCompileBounds != NULL)
-					clbkCompileBounds();
-			}
-		}
+		if (action == GLFW_RELEASE)
+			if (clbkCompileBounds != NULL)
+				clbkCompileBounds();
 		break;
 	case GLFW_KEY_C:
 		if (action == GLFW_RELEASE) {
 			if (mod & GLFW_MOD_SHIFT) {
 				bRenderCameraTrajectory = !bRenderCameraTrajectory;
-			} else if (mod & GLFW_MOD_CONTROL) {
-				if (clbkCenterScene != NULL)
-					clbkCenterScene();
 			} else {
 				bRenderCameras = !bRenderCameras;
 			}
@@ -305,12 +293,6 @@ void Window::Key(int k, int /*scancode*/, int action, int mod)
 	case GLFW_KEY_R:
 		if (action == GLFW_RELEASE)
 			Reset();
-		break;
-	case GLFW_KEY_S:
-		if (action == GLFW_RELEASE) {
-			if (clbkSaveScene != NULL)
-				clbkSaveScene(NULL, (mod & GLFW_MOD_SHIFT) != 0);
-		}
 		break;
 	case GLFW_KEY_T:
 		if (action == GLFW_RELEASE) {
