@@ -1,5 +1,5 @@
 #include "ReadPose.h"
-#include <OpenMVS/MVS/Common.h>
+#include <../Common/Common.h>
 using namespace MVS;
 
 struct POINT3F
