@@ -70,6 +70,7 @@ boost::program_options::variables_map vm;
 // initialize and parse the command line parameters
 bool Initialize(size_t argc, LPCTSTR* argv)
 {
+	std::cout << "Debug:  Enter Initialization" << std::endl;
 	// initialize log and console
 	OPEN_LOG();
 	OPEN_LOGCONSOLE();
