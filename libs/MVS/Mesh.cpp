@@ -977,7 +977,7 @@ public:
 	static QuadricTemp &TD() { return *TDp(); }
 };
 
-typedef BasicVertexPair<Vertex> VertexPair;
+typedef vcg::tri::BasicVertexPair<Vertex> VertexPair;
 
 class TriEdgeCollapseMVS : public vcg::tri::TriEdgeCollapseQuadric<Mesh, VertexPair, TriEdgeCollapseMVS, QHelper> {
 public:
