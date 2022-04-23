@@ -979,10 +979,10 @@ public:
 
 typedef BasicVertexPair<Vertex> VertexPair;
 
-class TriEdgeCollapse : public vcg::tri::TriEdgeCollapseQuadric<Mesh, VertexPair, TriEdgeCollapse, QHelper> {
+class TriEdgeCollapseMVS : public vcg::tri::TriEdgeCollapseQuadric<Mesh, VertexPair, TriEdgeCollapseMVS, QHelper> {
 public:
-	typedef vcg::tri::TriEdgeCollapseQuadric<Mesh, VertexPair, TriEdgeCollapse, QHelper> TECQ;
-	inline TriEdgeCollapse(const VertexPair &p, int i, vcg::BaseParameterClass *pp) :TECQ(p, i, pp) {}
+	typedef vcg::tri::TriEdgeCollapseQuadric<Mesh, VertexPair, TriEdgeCollapseMVS, QHelper> TECQ;
+	inline TriEdgeCollapseMVS(const VertexPair &p, int i, vcg::BaseParameterClass *pp) :TECQ(p, i, pp) {}
 };
 }
 
@@ -1062,12 +1062,12 @@ void Mesh::Clean(float fDecimate, float fSpurious, bool bRemoveSpikes, unsigned 
 		const int OriginalFaceNum(mesh.fn);
 		Util::Progress progress(_T("Decimated faces"), OriginalFaceNum-TargetFaceNum);
 		vcg::LocalOptimization<CLEAN::Mesh> DeciSession(mesh, &pp);
-		DeciSession.Init<CLEAN::TriEdgeCollapse>();
+		DeciSession.Init<CLEAN::TriEdgeCollapseMVS>();
 		DeciSession.SetTargetSimplices(TargetFaceNum);
 		DeciSession.SetTimeBudget(0.1f); // this allow to update the progress bar 10 time for sec...
 		while (DeciSession.DoOptimization() && mesh.fn>TargetFaceNum)
 			progress.display(OriginalFaceNum - mesh.fn);
-		DeciSession.Finalize<CLEAN::TriEdgeCollapse>();
+		DeciSession.Finalize<CLEAN::TriEdgeCollapseMVS>();
 		progress.close();
 		DEBUG_ULTIMATE("Mesh decimated: %d -> %d faces", OriginalFaceNum, TargetFaceNum);
 	}
