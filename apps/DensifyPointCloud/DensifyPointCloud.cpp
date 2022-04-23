@@ -270,9 +270,17 @@ int main(int argc, LPCTSTR* argv)
 		Finalize();
 		return EXIT_SUCCESS;
 	}
+
 	// load and estimate a dense point-cloud
-	if (!scene.Load(MAKE_PATH_SAFE(OPT::strInputFileName)))
-		return EXIT_FAILURE;
+	#define use_custom_pose
+	#ifdef use_custom_pose
+	    if(!load_scene(string(MAKE_PATH_SAFE(OPT::strInputFileName)),scene))
+	   		return EXIT_FAILURE;
+	#else
+		if (!scene.Load(MAKE_PATH_SAFE(OPT::strInputFileName)))
+			return EXIT_FAILURE;
+	#endif
+
 	if (!OPT::strExportROIFileName.empty() && scene.IsBounded()) {
 		std::ofstream fs(MAKE_PATH_SAFE(OPT::strExportROIFileName));
 		if (!fs)
