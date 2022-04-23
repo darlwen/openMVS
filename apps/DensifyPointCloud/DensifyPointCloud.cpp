@@ -32,6 +32,7 @@
 #include "../../libs/MVS/Common.h"
 #include "../../libs/MVS/Scene.h"
 #include <boost/program_options.hpp>
+#include "../../libs/IO/ReadPose.h"
 
 using namespace MVS;
 
@@ -261,8 +262,14 @@ int main(int argc, LPCTSTR* argv)
 		return EXIT_SUCCESS;
 	}
 	// load and estimate a dense point-cloud
-	if (!scene.Load(MAKE_PATH_SAFE(OPT::strInputFileName)))
+	#define use_custom_pose
+	#ifdef use_custom_pose
+	   if(!load_scene(string(MAKE_PATH_SAFE(OPT::strInputFileName)),scene))
 		return EXIT_FAILURE;
+	#else
+		if (!scene.Load(MAKE_PATH_SAFE(OPT::strInputFileName)))
+			return EXIT_FAILURE;
+	#endif
 	if (!OPT::strMeshFileName.empty())
 		scene.mesh.Load(MAKE_PATH_SAFE(OPT::strMeshFileName));
 	if (scene.pointcloud.IsEmpty() && OPT::strViewNeighborsFileName.empty() && scene.mesh.IsEmpty()) {
