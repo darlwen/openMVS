@@ -861,7 +861,7 @@ bool Scene::SelectNeighborViews(uint32_t ID, IndexArr& points, unsigned nMinView
 	std::cout << "DEBUG: neighbors size: " << neighbors.GetSize() << std::endl;
 	std::cout << "DEBUG: nMinViews: " << nMinViews << std::endl;
 	std::cout << "DEBUG: nCalibratedImages: " << nCalibratedImages << std::endl;
-	
+
 	if (points.GetSize() <= 3 || neighbors.GetSize() < MINF(nMinViews,nCalibratedImages-1)) {
 		DEBUG_EXTRA("error: reference image %3u has not enough images in view", ID);
 		return false;
@@ -876,6 +876,9 @@ bool Scene::FilterNeighborViews(ViewScoreArr& neighbors, float fMinArea, float f
 	// remove invalid neighbor views
 	RFOREACH(n, neighbors) {
 		const ViewScore& neighbor = neighbors[n];
+		std::cout << "DEBUG: neighbor.idx.area: " << neighbor.idx.area << "  fMinArea: " << fMinArea << std::endl;
+		std::cout << "DEBUG: fMinScale: " << fMinScale << "  neighbor.idx.scale: " << neighbor.idx.scale << "  fMaxScale: " << fMaxScale << std::endl;
+		std::cout << "DEBUG: fMinAngle: " << fMinAngle << "  neighbor.idx.angle: " << neighbor.idx.angle << "  fMaxAngle: " << fMaxAngle << std::endl;
 		if (neighbor.idx.area < fMinArea ||
 			!ISINSIDE(neighbor.idx.scale, fMinScale, fMaxScale) ||
 			!ISINSIDE(neighbor.idx.angle, fMinAngle, fMaxAngle))
