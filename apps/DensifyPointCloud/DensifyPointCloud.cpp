@@ -257,9 +257,11 @@ int main(int argc, LPCTSTR* argv)
     std::cout << "============== enter main func ==================" << std::endl;
 	if (!Initialize(argc, argv))
 		return EXIT_FAILURE;
+    std::cout << "============== finish Initialize ==================" << std::endl;
 
 	Scene scene(OPT::nMaxThreads);
 	if (OPT::fSampleMesh != 0) {
+		std::cout << "============== enter sample input mesh and export the obtained point-cloud ==================" << std::endl;
 		// sample input mesh and export the obtained point-cloud
 		if (!scene.mesh.Load(MAKE_PATH_SAFE(OPT::strInputFileName)))
 			return EXIT_FAILURE;
@@ -272,19 +274,24 @@ int main(int argc, LPCTSTR* argv)
 		VERBOSE("Sample mesh completed: %u points (%s)", pointcloud.GetSize(), TD_TIMER_GET_FMT().c_str());
 		pointcloud.Save(MAKE_PATH_SAFE(Util::getFileFullName(OPT::strOutputFileName))+_T(".ply"));
 		Finalize();
+		std::cout << "============== finish sample input mesh and export the obtained point-cloud ==================" << std::endl;
 		return EXIT_SUCCESS;
 	}
 
 	// load and estimate a dense point-cloud
 	#define use_custom_pose
 	#ifdef use_custom_pose
+	    std::cout << "============== enter  load_scene ==================" << std::endl;
 	    if(!load_scene(string(MAKE_PATH_SAFE(OPT::strInputFileName)),scene))
 	   		return EXIT_FAILURE;
 	#else
 		if (!scene.Load(MAKE_PATH_SAFE(OPT::strInputFileName)))
 			return EXIT_FAILURE;
 	#endif
+    std::cout << "============== finish  load_scene ==================" << std::endl;
 
+
+    std::cout << "============== enter  strExportROIFileName ==================" << std::endl;
 	if (!OPT::strExportROIFileName.empty() && scene.IsBounded()) {
 		std::ofstream fs(MAKE_PATH_SAFE(OPT::strExportROIFileName));
 		if (!fs)
@@ -293,6 +300,9 @@ int main(int argc, LPCTSTR* argv)
 		Finalize();
 		return EXIT_SUCCESS;
 	}
+	std::cout << "============== finsih  strExportROIFileName ==================" << std::endl;
+
+    std::cout << "============== enter  strImportROIFileName ==================" << std::endl;
 	if (!OPT::strImportROIFileName.empty()) {
 		std::ifstream fs(MAKE_PATH_SAFE(OPT::strImportROIFileName));
 		if (!fs)
@@ -302,14 +312,26 @@ int main(int argc, LPCTSTR* argv)
 		Finalize();
 		return EXIT_SUCCESS;
 	}
+	std::cout << "============== finish  strImportROIFileName ==================" << std::endl;
+
+    std::cout << "============== enter  strMeshFileName ==================" << std::endl;
 	if (!OPT::strMeshFileName.empty())
 		scene.mesh.Load(MAKE_PATH_SAFE(OPT::strMeshFileName));
+    std::cout << "============== finish  strMeshFileName ==================" << std::endl;
+
+    std::cout << "============== enter  strViewNeighborsFileName ==================" << std::endl;
 	if (scene.pointcloud.IsEmpty() && OPT::strViewNeighborsFileName.empty() && scene.mesh.IsEmpty()) {
 		VERBOSE("error: empty initial point-cloud");
 		return EXIT_FAILURE;
 	}
+	std::cout << "============== finish  strViewNeighborsFileName ==================" << std::endl;
+
+    std::cout << "============== enter  LoadViewNeighbors ==================" << std::endl;
 	if (!OPT::strViewNeighborsFileName.empty())
 		scene.LoadViewNeighbors(MAKE_PATH_SAFE(OPT::strViewNeighborsFileName));
+	std::cout << "============== finish  LoadViewNeighbors ==================" << std::endl;
+
+    std::cout << "============== enter  ImagesHaveNeighbors ==================" << std::endl;
 	if (!OPT::strOutputViewNeighborsFileName.empty()) {
 		if (!scene.ImagesHaveNeighbors()) {
 			VERBOSE("error: neighbor views not computed yet");
@@ -318,6 +340,9 @@ int main(int argc, LPCTSTR* argv)
 		scene.SaveViewNeighbors(MAKE_PATH_SAFE(OPT::strOutputViewNeighborsFileName));
 		return EXIT_SUCCESS;
 	}
+	std::cout << "============== finish  ImagesHaveNeighbors ==================" << std::endl;
+
+    std::cout << "============== enter  strExportDepthMapsName ==================" << std::endl;
 	if (!OPT::strExportDepthMapsName.empty() && !scene.mesh.IsEmpty()) {
 		// project mesh onto each image and save the resulted depth-maps
 		TD_TIMER_START();
@@ -327,6 +352,9 @@ int main(int argc, LPCTSTR* argv)
 		Finalize();
 		return EXIT_SUCCESS;
 	}
+	std::cout << "============== finish  strExportDepthMapsName ==================" << std::endl;
+
+    std::cout << "============== enter  split the scene in sub-scenes by maximum sampling area ==================" << std::endl;
 	if (OPT::fMaxSubsceneArea > 0) {
 		// split the scene in sub-scenes by maximum sampling area
 		Scene::ImagesChunkArr chunks;
@@ -335,6 +363,9 @@ int main(int argc, LPCTSTR* argv)
 		Finalize();
 		return EXIT_SUCCESS;
 	}
+	std::cout << "============== finish split the scene in sub-scenes by maximum sampling area ==================" << std::endl;
+
+    std::cout << "============== enter  filter point-cloud based on camera-point visibility intersections ==================" << std::endl;
 	if (OPT::thFilterPointCloud < 0) {
 		// filter point-cloud based on camera-point visibility intersections
 		scene.PointCloudFilter(OPT::thFilterPointCloud);
@@ -344,6 +375,9 @@ int main(int argc, LPCTSTR* argv)
 		Finalize();
 		return EXIT_SUCCESS;
 	}
+	std::cout << "============== finish  filter point-cloud based on camera-point visibility intersections ==================" << std::endl;
+
+    std::cout << "============== enter  export point-cloud containing only points with N+ views ==================" << std::endl;
 	if (OPT::nExportNumViews && scene.pointcloud.IsValid()) {
 		// export point-cloud containing only points with N+ views
 		const String baseFileName(MAKE_PATH_SAFE(Util::getFileFullName(OPT::strOutputFileName)));
@@ -351,6 +385,9 @@ int main(int argc, LPCTSTR* argv)
 		Finalize();
 		return EXIT_SUCCESS;
 	}
+	std::cout << "============== finish  export point-cloud containing only points with N+ views ==================" << std::endl;
+
+    std::cout << "============== enter  DenseReconstruction ==================" << std::endl;
 	if ((ARCHIVE_TYPE)OPT::nArchiveType != ARCHIVE_MVS) {
 		TD_TIMER_START();
 		if (!scene.DenseReconstruction(OPT::nFusionMode)) {
@@ -362,8 +399,10 @@ int main(int argc, LPCTSTR* argv)
 		}
 		VERBOSE("Densifying point-cloud completed: %u points (%s)", scene.pointcloud.GetSize(), TD_TIMER_GET_FMT().c_str());
 	}
+	std::cout << "============== finish DenseReconstruction ==================" << std::endl;
 
 	// save the final point-cloud
+	std::cout << "============== enter  save the final point-cloud ==================" << std::endl;
 	const String baseFileName(MAKE_PATH_SAFE(Util::getFileFullName(OPT::strOutputFileName)));
 	scene.Save(baseFileName+_T(".mvs"), (ARCHIVE_TYPE)OPT::nArchiveType);
 	scene.pointcloud.Save(baseFileName+_T(".ply"));
@@ -373,6 +412,9 @@ int main(int argc, LPCTSTR* argv)
 	#endif
 
 	Finalize();
+
+    std::cout << "============== finish save the final point-cloud ==================" << std::endl;
+
 	return EXIT_SUCCESS;
 }
 /*----------------------------------------------------------------*/

@@ -143,7 +143,7 @@ bool read_mvs_pose(string file, MVSPOSE &mvs_pose)
     isbuf_npoint >> num_pts;
 	mvs_pose.sparse_points.resize(num_pts);
 	mvs_pose.views.resize(num_pts);
-    std::cout << "num_pts" <<num_pts << std::endl;
+    std::cout << "num_pts " <<num_pts << std::endl;
 
 	for (int i = 0; i < num_pts; i++)
 	{
@@ -202,6 +202,7 @@ bool load_scene(string file, Scene &scene)
 		MVS::Image& image = scene.images.AddEmpty();
 
         string name=string(WORKING_FOLDER)+"images/"+mvs_pose.images_name[idx]+".jpg";
+		cout << "image file path: " << name << endl;
         image.name=name;
         image.platformID = scene.platforms.GetSize();
         image.cameraID = 0;
@@ -216,7 +217,7 @@ bool load_scene(string file, Scene &scene)
 		camera.K = MVS::Platform::Camera::ComposeK<REAL, REAL>(mvs_pose.poses[idx].K[0], mvs_pose.poses[idx].K[4] , 2.0*mvs_pose.poses[idx].K[2] , 2.0*mvs_pose.poses[idx].K[5]);
 		camera.R = RMatrix::IDENTITY;
 		camera.C = CMatrix::ZERO;
-        cout << "camera.K" << camera.K << endl;
+        cout << "camera.K\n" << camera.K << endl;
 		// normalize camera intrinsics
 		const REAL fScale(REAL(1) / MVS::Camera::GetNormalizationScale(image.width, image.height));
 		camera.K(0, 0) *= fScale;
@@ -237,8 +238,8 @@ bool load_scene(string file, Scene &scene)
 			pose.C.ptr()[j] = -float(double(mvs_pose.poses[idx].rot[j])*double(mvs_pose.poses[idx].trans[0]) + double(mvs_pose.poses[idx].rot[3 + j])*double(mvs_pose.poses[idx].trans[1]) + double(mvs_pose.poses[idx].rot[6 + j])*double(mvs_pose.poses[idx].trans[2]));
 		}
 
-		cout <<"image.poseID " << image.poseID <<"image.platformID"<<image.platformID<<endl;
-		cout << "camera.R\n"<<camera.R << "camera.C" << camera.C << endl;
+		cout <<"image.poseID " << image.poseID <<"   image.platformID "<<image.platformID<<endl;
+		cout << "camera.R\n"<<camera.R << " \n camera.C \n" << camera.C << endl;
 
         POINT3F point_tmp(pose.C.x,pose.C.y,pose.C.z);
 		points.push_back(point_tmp);
@@ -247,7 +248,7 @@ bool load_scene(string file, Scene &scene)
 
 		++scene.nCalibratedImages;
 
-		cout <<"nCalibratedImages" << scene.nCalibratedImages << endl;
+		cout <<"nCalibratedImages  " << scene.nCalibratedImages << endl;
 	}
 
     std::cout << "deal with feature points" << std::endl;
