@@ -1651,9 +1651,11 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 		#else
 		FOREACH(idxImage, images) {
 		#endif
+		    std::cout << " =================== enter foreach iteration ======================" << std::endl;
 			// skip invalid, uncalibrated or discarded images
 			Image& imageData = images[idxImage];
 			if (!imageData.IsValid()) {
+				std::cout << " ==================== image data is invalid ====================" << std::endl;
 				#ifdef DENSE_USE_OPENMP
 				#pragma omp critical
 				#endif
@@ -1665,6 +1667,7 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 			#pragma omp critical
 			#endif
 			{
+				std::cout << " =============== map image index: " << idxImage << " ===================" << std::endl;
 				imagesMap[idxImage] = data.images.GetSize();
 				data.images.Insert(idxImage);
 			}
@@ -1672,6 +1675,7 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 			unsigned nResolutionLevel(OPTDENSE::nResolutionLevel);
 			const unsigned nMaxResolution(imageData.RecomputeMaxResolution(nResolutionLevel, OPTDENSE::nMinResolution, OPTDENSE::nMaxResolution));
 			if (!imageData.ReloadImage(nMaxResolution)) {
+				std::cout << " ================== failed to reload image ===================" << std::endl;
 				#ifdef DENSE_USE_OPENMP
 				bAbort = true;
 				#pragma omp flush (bAbort)
@@ -1708,6 +1712,7 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 			const IIndex idx((IIndex)ID);
 		#else
 		FOREACH(idx, data.images) {
+			std::cout << " ============= select images to be used for dense reconstruction: " << idx << " ===============" << endl;
 		#endif
 			const IIndex idxImage(data.images[idx]);
 			ASSERT(imagesMap[idxImage] != NO_ID);
@@ -1757,6 +1762,7 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 	data.progress = new Util::Progress("Estimated depth-maps", data.images.GetSize());
 	GET_LOGCONSOLE().Pause();
 	if (nMaxThreads > 1) {
+		std::cout << " ================== multi-thread execution of DenseReconstructionEstimateTmp ===============" << std::endl;
 		// multi-thread execution
 		cList<SEACAVE::Thread> threads(2);
 		FOREACHPTR(pThread, threads)
@@ -1764,6 +1770,7 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 		FOREACHPTR(pThread, threads)
 			pThread->join();
 	} else {
+		std::cout << " ================== single-thread execution DenseReconstructionEstimate =============" << std::endl;
 		// single-thread execution
 		DenseReconstructionEstimate((void*)&data);
 	}
@@ -1781,6 +1788,7 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 		}
 		#endif // _USE_CUDA
 		while (++data.nEstimationGeometricIter < (int)OPTDENSE::nEstimationGeometricIters) {
+			std::cout << " ====== initialize the queue of images to be geometric processed ======= " << std::endl;
 			// initialize the queue of images to be geometric processed
 			if (data.nEstimationGeometricIter+1 == (int)OPTDENSE::nEstimationGeometricIters)
 				OPTDENSE::nOptimize = nOptimize;
@@ -1819,6 +1827,7 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 	}
 
 	if ((OPTDENSE::nOptimize & OPTDENSE::ADJUST_FILTER) != 0) {
+		std::cout << " ====== initialize the queue of depth-maps to be filtered ======= " << std::endl;
 		// initialize the queue of depth-maps to be filtered
 		data.sem.Clear();
 		data.idxImage = data.images.GetSize();
