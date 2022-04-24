@@ -1699,7 +1699,7 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 			return false;
 		}
 		VERBOSE("Preparing images for dense reconstruction completed: %d images (%s)", images.GetSize(), TD_TIMER_GET_FMT().c_str());
-	}
+		}
 
 	// select images to be used for dense reconstruction
 	{
