@@ -1630,11 +1630,13 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 	}
 
 	{
+	std::cout << " ===================  maps global view indices to our list of views to be processed ====================" << std::endl;
 	// maps global view indices to our list of views to be processed
 	IIndexArr imagesMap;
 
 	// prepare images for dense reconstruction (load if needed)
 	{
+		std::cout << " ================ images size: " << images.GetSize() << "    =====================" << std::endl;
 		TD_TIMER_START();
 		data.images.Reserve(images.GetSize());
 		imagesMap.Resize(images.GetSize());
