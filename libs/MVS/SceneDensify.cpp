@@ -1724,6 +1724,8 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 				invalidIDs.InsertSort(idx);
 			}
 		}
+		std::cout << "======= invalidIds number: " << invalidIDs.GetSize() << "  ================" << std::endl;
+		
 		RFOREACH(i, invalidIDs) {
 			const IIndex idx(invalidIDs[i]);
 			imagesMap[data.images.Last()] = idx;
