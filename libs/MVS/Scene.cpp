@@ -857,6 +857,11 @@ bool Scene::SelectNeighborViews(uint32_t ID, IndexArr& points, unsigned nMinView
 		VERBOSE("Reference image %3u sees %u views:%s (%u shared points)", ID, neighbors.GetSize(), msg.c_str(), nPoints);
 	}
 	#endif
+	std::cout << "DEBUG: points size: " << points.GetSize() << std::endl;
+	std::cout << "DEBUG: neighbors size: " << neighbors.GetSize() << std::endl;
+	std::cout << "DEBUG: nMinViews: " << nMinViews << std::endl;
+	std::cout << "DEBUG: nCalibratedImages: " << nCalibratedImages << std::endl;
+	
 	if (points.GetSize() <= 3 || neighbors.GetSize() < MINF(nMinViews,nCalibratedImages-1)) {
 		DEBUG_EXTRA("error: reference image %3u has not enough images in view", ID);
 		return false;
