@@ -815,6 +815,7 @@ bool Scene::SelectNeighborViews(uint32_t ID, IndexArr& points, unsigned nMinView
 	std::cout << "DEBUG: select best neighborViews" << std::endl;
 	Point2fArr projs(0, points.GetSize());
 	std::cout << "DEBUG: images size: " << images.GetSize() << std::endl;
+	std::cout << "DEBUG: points size: " << points.GetSize() << std::endl;
 	FOREACH(IDB, images) {
 		std::cout <<"DEBUG: IDB:" << IDB << "    ID:" << ID << std::endl;
 		const Image& imageDataB = images[IDB];
@@ -829,9 +830,6 @@ bool Scene::SelectNeighborViews(uint32_t ID, IndexArr& points, unsigned nMinView
 		const Point2f boundsB(imageDataB.GetSize());
 		ASSERT(projs.IsEmpty());
 		for (uint32_t idx: points) {
-			std::cout << "DEBUG: idx:" << idx << std::endl;
-			std::cout << "DEBUG: pointViews size:" << pointcloud.pointViews.GetSize() << std::endl;
-			std::cout << "DEBUG: pointcloud.points size:" << pointcloud.points.GetSize() << std::endl;
 			const PointCloud::ViewArr& views = pointcloud.pointViews[idx];
 			ASSERT(views.IsSorted());
 			ASSERT(views.FindFirst(ID) != PointCloud::ViewArr::NO_INDEX);
