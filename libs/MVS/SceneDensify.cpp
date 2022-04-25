@@ -1323,12 +1323,14 @@ void DepthMapsData::FuseDepthMaps(PointCloud& pointcloud, bool bEstimateColor, b
 	size_t nPointsEstimate(0);
 	bool bNormalMap(true);
 	FOREACH(i, scene.images) {
+		std::cout << "DEBUG: image idx: " << i << std::endl;
 		DepthData& depthData = arrDepthData[i];
 		if (!depthData.IsValid())
 			continue;
 		if (depthData.IncRef(ComposeDepthFilePath(depthData.GetView().GetID(), "dmap")) == 0)
 			return;
 		ASSERT(!depthData.IsEmpty());
+		std::cout << "DEBUG: compute connection detail" << std::endl;
 		IndexScore& connection = connections.AddEmpty();
 		connection.idx = i;
 		connection.score = (float)scene.images[i].neighbors.GetSize();
@@ -1337,6 +1339,7 @@ void DepthMapsData::FuseDepthMaps(PointCloud& pointcloud, bool bEstimateColor, b
 			bNormalMap = false;
 	}
 	connections.Sort();
+	std::cout << "DEBUG: after find best connected images, connections size: " << connections.GetSize() << std::endl;
 
 	// fuse all depth-maps, processing the best connected images first
 	const unsigned nMinViewsFuse(MINF(OPTDENSE::nMinViewsFuse, scene.images.GetSize()));
