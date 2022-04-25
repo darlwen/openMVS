@@ -1721,9 +1721,9 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 		#pragma omp parallel for shared(data, invalidIDs)
 		for (int_t ID=0; ID<(int_t)data.images.GetSize(); ++ID) {
 			const IIndex idx((IIndex)ID);
+		    std::cout << " ============= select images to be used for dense reconstruction: " << idx << " ===============" << endl;
 		#else
 		FOREACH(idx, data.images) {
-			std::cout << " ============= select images to be used for dense reconstruction: " << idx << " ===============" << endl;
 		#endif
 			const IIndex idxImage(data.images[idx]);
 			ASSERT(imagesMap[idxImage] != NO_ID);

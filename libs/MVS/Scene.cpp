@@ -740,7 +740,7 @@ inline float Footprint(const Camera& camera, const Point3f& X) {
 bool Scene::SelectNeighborViews(uint32_t ID, IndexArr& points, unsigned nMinViews, unsigned nMinPointViews, float fOptimAngle, unsigned nInsideROI)
 {
 	ASSERT(points.IsEmpty());
-
+    std::cout << "DEBUG: ID: " << ID << std::endl;
 	// extract the estimated 3D points and the corresponding 2D projections for the reference image
 	Image& imageData = images[ID];
 	ASSERT(imageData.IsValid());
@@ -752,6 +752,7 @@ bool Scene::SelectNeighborViews(uint32_t ID, IndexArr& points, unsigned nMinView
 		float avgAngle;
 		uint32_t points;
 	};
+	std::cout << "DEBUG: image size: " << images.GetSize() << std::endl;
 	CLISTDEF0(Score) scores(images.GetSize());
 	scores.Memset(0);
 	if (nMinPointViews > nCalibratedImages)
@@ -761,6 +762,8 @@ bool Scene::SelectNeighborViews(uint32_t ID, IndexArr& points, unsigned nMinView
 	const float sigmaAngleSmall(-1.f/(2.f*SQUARE(fOptimAngle*0.38f)));
 	const float sigmaAngleLarge(-1.f/(2.f*SQUARE(fOptimAngle*0.7f)));
 	const bool bCheckInsideROI(nInsideROI > 0 && IsBounded());
+
+	std::cout << "DEBUG: pointcloud points size: " << pointcloud.points.GetSize() << std::endl;
 	FOREACH(idx, pointcloud.points) {
 		const PointCloud::ViewArr& views = pointcloud.pointViews[idx];
 		ASSERT(views.IsSorted());
@@ -804,11 +807,14 @@ bool Scene::SelectNeighborViews(uint32_t ID, IndexArr& points, unsigned nMinView
 			++score.points;
 		}
 	}
+	std::cout << "DEBUG: nPoints: " << nPoints << std::endl;
 	imageData.avgDepth /= nPoints;
 	ASSERT(nPoints > 3);
 
 	// select best neighborViews
+	std::cout << "DEBUG: select best neighborViews" << std::endl;
 	Point2fArr projs(0, points.GetSize());
+	std::cout << "DEBUG: images size: " << images.GetSize() << std::endl;
 	FOREACH(IDB, images) {
 		const Image& imageDataB = images[IDB];
 		if (!imageDataB.IsValid())
