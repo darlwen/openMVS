@@ -853,6 +853,7 @@ bool Scene::SelectNeighborViews(uint32_t ID, IndexArr& points, unsigned nMinView
 		neighbor.idx.area = area;
 		neighbor.score = score.score*MAXF(area,0.01f);
 	}
+	std::cout << "DEBUG: neighbors size: " << neighbors.GetSize() << std::endl;
 	neighbors.Sort();
 	#if TD_VERBOSE != TD_VERBOSE_OFF
 	// print neighbor views
