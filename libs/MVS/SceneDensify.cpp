@@ -1323,18 +1323,14 @@ void DepthMapsData::FuseDepthMaps(PointCloud& pointcloud, bool bEstimateColor, b
 	size_t nPointsEstimate(0);
 	bool bNormalMap(true);
 	FOREACH(i, scene.images) {
-		std::cout << "DEBUG: image idx: " << i << std::endl;
 		DepthData& depthData = arrDepthData[i];
 		if (!depthData.IsValid()) {
-			std::cout << "DEBUG: depthData is inValid!" << std::endl;
 			continue;
 		}
 		if (depthData.IncRef(ComposeDepthFilePath(depthData.GetView().GetID(), "dmap")) == 0) {
-			std::cout << "DEBUG: depthData IncRef " << std::endl;
 			return;
 		}
 		ASSERT(!depthData.IsEmpty());
-		std::cout << "DEBUG: compute connection detail" << std::endl;
 		IndexScore& connection = connections.AddEmpty();
 		connection.idx = i;
 		connection.score = (float)scene.images[i].neighbors.GetSize();
@@ -1343,7 +1339,6 @@ void DepthMapsData::FuseDepthMaps(PointCloud& pointcloud, bool bEstimateColor, b
 			bNormalMap = false;
 	}
 	connections.Sort();
-	std::cout << "DEBUG: after find best connected images, connections size: " << connections.GetSize() << std::endl;
 
 	// fuse all depth-maps, processing the best connected images first
 	const unsigned nMinViewsFuse(MINF(OPTDENSE::nMinViewsFuse, scene.images.GetSize()));
@@ -1662,11 +1657,9 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 		#else
 		FOREACH(idxImage, images) {
 		#endif
-		    std::cout << " =================== enter foreach iteration ======================" << std::endl;
 			// skip invalid, uncalibrated or discarded images
 			Image& imageData = images[idxImage];
 			if (!imageData.IsValid()) {
-				std::cout << " ==================== image data is invalid ====================" << std::endl;
 				#ifdef DENSE_USE_OPENMP
 				#pragma omp critical
 				#endif
@@ -1678,7 +1671,6 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 			#pragma omp critical
 			#endif
 			{
-				std::cout << " =============== map image index: " << idxImage << " ===================" << std::endl;
 				imagesMap[idxImage] = data.images.GetSize();
 				data.images.Insert(idxImage);
 			}
@@ -1686,7 +1678,6 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 			unsigned nResolutionLevel(OPTDENSE::nResolutionLevel);
 			const unsigned nMaxResolution(imageData.RecomputeMaxResolution(nResolutionLevel, OPTDENSE::nMinResolution, OPTDENSE::nMaxResolution));
 			if (!imageData.ReloadImage(nMaxResolution)) {
-				std::cout << " ================== failed to reload image ===================" << std::endl;
 				#ifdef DENSE_USE_OPENMP
 				bAbort = true;
 				#pragma omp flush (bAbort)
