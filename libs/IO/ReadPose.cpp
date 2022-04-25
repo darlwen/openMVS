@@ -153,8 +153,6 @@ bool read_mvs_pose(string file, MVSPOSE &mvs_pose)
 		int num_keys;
 
         isbuf_points >> x >> y >> z >> num_keys;
-		if(num_keys < 3)
-		    continue;
 
 		mvs_pose.sparse_points[i].x = x;
 		mvs_pose.sparse_points[i].y = y;
