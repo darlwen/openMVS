@@ -1325,10 +1325,14 @@ void DepthMapsData::FuseDepthMaps(PointCloud& pointcloud, bool bEstimateColor, b
 	FOREACH(i, scene.images) {
 		std::cout << "DEBUG: image idx: " << i << std::endl;
 		DepthData& depthData = arrDepthData[i];
-		if (!depthData.IsValid())
+		if (!depthData.IsValid()) {
+			std::cout << "DEBUG: depthData is inValid!" << std::endl;
 			continue;
-		if (depthData.IncRef(ComposeDepthFilePath(depthData.GetView().GetID(), "dmap")) == 0)
+		}
+		if (depthData.IncRef(ComposeDepthFilePath(depthData.GetView().GetID(), "dmap")) == 0) {
+			std::cout << "DEBUG: depthData IncRef " << std::endl;
 			return;
+		}
 		ASSERT(!depthData.IsEmpty());
 		std::cout << "DEBUG: compute connection detail" << std::endl;
 		IndexScore& connection = connections.AddEmpty();
