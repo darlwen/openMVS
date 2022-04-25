@@ -87,7 +87,7 @@ bool read_mvs_pose(string file, MVSPOSE &mvs_pose)
 	string s;
 	int width;
 	int height;
-	isbufLine >> s >> width >> height;
+	isbufLine >> s >> height >> width;
 	mvs_pose.height=height;
 	mvs_pose.width=width;
     std::cout << "width " << width << std::endl;
@@ -153,6 +153,9 @@ bool read_mvs_pose(string file, MVSPOSE &mvs_pose)
 		int num_keys;
 
         isbuf_points >> x >> y >> z >> num_keys;
+		if(num_keys < 3)
+		    continue;
+
 		mvs_pose.sparse_points[i].x = x;
 		mvs_pose.sparse_points[i].y = y;
 		mvs_pose.sparse_points[i].z = z;
@@ -174,7 +177,7 @@ bool read_mvs_pose(string file, MVSPOSE &mvs_pose)
         points.push_back(Q);
 
 	}
-    save_pointcloud_obj(string(WORKING_FOLDER) + "/track.obj", points,mvs_pose.poses.size(),color);
+    save_pointcloud_obj(string(WORKING_FOLDER) + "/track.obj", points, mvs_pose.poses.size(), color);
 	return true;
 }
 
