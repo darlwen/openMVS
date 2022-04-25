@@ -1568,9 +1568,13 @@ bool Scene::DenseReconstruction(int nFusionMode)
 	// estimate depth-maps
 	if (!ComputeDepthMaps(data))
 		return false;
+	
+	std::cout << "DEBUG: finish ComputeDepthMaps!" << std::endl;
+
 	if (ABS(nFusionMode) == 1)
 		return true;
 
+    std::cout << "DEBUG: pointcloud size: " << pointcloud.GetSize() << std::endl;
 	// fuse all depth-maps
 	pointcloud.Release();
 	if (OPTDENSE::nMinViewsFuse < 2) {
@@ -1725,7 +1729,7 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 			}
 		}
 		std::cout << "======= invalidIds number: " << invalidIDs.GetSize() << "  ================" << std::endl;
-		
+
 		RFOREACH(i, invalidIDs) {
 			const IIndex idx(invalidIDs[i]);
 			imagesMap[data.images.Last()] = idx;
