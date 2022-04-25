@@ -1721,7 +1721,6 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 		#pragma omp parallel for shared(data, invalidIDs)
 		for (int_t ID=0; ID<(int_t)data.images.GetSize(); ++ID) {
 			const IIndex idx((IIndex)ID);
-		    std::cout << " ============= select images to be used for dense reconstruction: " << idx << " ===============" << std::endl;
 		#else
 		FOREACH(idx, data.images) {
 		#endif
@@ -1735,7 +1734,6 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 				invalidIDs.InsertSort(idx);
 			}
 		}
-		std::cout << "======= invalidIds number: " << invalidIDs.GetSize() << "  ================" << std::endl;
 
 		RFOREACH(i, invalidIDs) {
 			const IIndex idx(invalidIDs[i]);
@@ -1775,7 +1773,6 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 	data.progress = new Util::Progress("Estimated depth-maps", data.images.GetSize());
 	GET_LOGCONSOLE().Pause();
 	if (nMaxThreads > 1) {
-		std::cout << " ================== multi-thread execution of DenseReconstructionEstimateTmp ===============" << std::endl;
 		// multi-thread execution
 		cList<SEACAVE::Thread> threads(2);
 		FOREACHPTR(pThread, threads)
@@ -1783,7 +1780,6 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 		FOREACHPTR(pThread, threads)
 			pThread->join();
 	} else {
-		std::cout << " ================== single-thread execution DenseReconstructionEstimate =============" << std::endl;
 		// single-thread execution
 		DenseReconstructionEstimate((void*)&data);
 	}
@@ -1801,7 +1797,6 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 		}
 		#endif // _USE_CUDA
 		while (++data.nEstimationGeometricIter < (int)OPTDENSE::nEstimationGeometricIters) {
-			std::cout << " ====== initialize the queue of images to be geometric processed ======= " << std::endl;
 			// initialize the queue of images to be geometric processed
 			if (data.nEstimationGeometricIter+1 == (int)OPTDENSE::nEstimationGeometricIters)
 				OPTDENSE::nOptimize = nOptimize;
@@ -1840,7 +1835,6 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 	}
 
 	if ((OPTDENSE::nOptimize & OPTDENSE::ADJUST_FILTER) != 0) {
-		std::cout << " ====== initialize the queue of depth-maps to be filtered ======= " << std::endl;
 		// initialize the queue of depth-maps to be filtered
 		data.sem.Clear();
 		data.idxImage = data.images.GetSize();

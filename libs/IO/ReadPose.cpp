@@ -267,6 +267,8 @@ bool load_scene(string file, Scene &scene)
 			views.InsertSort(mvs_pose.views[idx][viewId]);
 		}
 	}
+	std::cout << "DEBUG: scene.pointcloud.points size: " << scene.pointcloud.points.GetSize() << std::endl;
+	std::cout << "DEBUG: scene.pointcloud.pointViews size: " << scene.pointcloud.pointViews.GetSize() << std::endl;
 //    RGB color(255,0,0);
 //    save_pointcloud_obj(file + "/track_1.obj", points,mvs_pose.poses.size(),color);
 	return true;
