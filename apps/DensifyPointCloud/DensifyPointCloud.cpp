@@ -275,7 +275,7 @@ int main(int argc, LPCTSTR* argv)
 	}
 
 	// load and estimate a dense point-cloud
-	#define use_custom_pose
+	//#define use_custom_pose
 	#ifdef use_custom_pose
 	    if(!load_scene(string(MAKE_PATH_SAFE(OPT::strInputFileName)),scene))
 	   		return EXIT_FAILURE;
