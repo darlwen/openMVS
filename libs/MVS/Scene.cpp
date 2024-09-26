@@ -740,7 +740,6 @@ inline float Footprint(const Camera& camera, const Point3f& X) {
 bool Scene::SelectNeighborViews(uint32_t ID, IndexArr& points, unsigned nMinViews, unsigned nMinPointViews, float fOptimAngle, unsigned nInsideROI)
 {
 	ASSERT(points.IsEmpty());
-
 	// extract the estimated 3D points and the corresponding 2D projections for the reference image
 	Image& imageData = images[ID];
 	ASSERT(imageData.IsValid());
@@ -761,6 +760,7 @@ bool Scene::SelectNeighborViews(uint32_t ID, IndexArr& points, unsigned nMinView
 	const float sigmaAngleSmall(-1.f/(2.f*SQUARE(fOptimAngle*0.38f)));
 	const float sigmaAngleLarge(-1.f/(2.f*SQUARE(fOptimAngle*0.7f)));
 	const bool bCheckInsideROI(nInsideROI > 0 && IsBounded());
+
 	FOREACH(idx, pointcloud.points) {
 		const PointCloud::ViewArr& views = pointcloud.pointViews[idx];
 		ASSERT(views.IsSorted());
@@ -857,6 +857,7 @@ bool Scene::SelectNeighborViews(uint32_t ID, IndexArr& points, unsigned nMinView
 		VERBOSE("Reference image %3u sees %u views:%s (%u shared points)", ID, neighbors.GetSize(), msg.c_str(), nPoints);
 	}
 	#endif
+
 	if (points.GetSize() <= 3 || neighbors.GetSize() < MINF(nMinViews,nCalibratedImages-1)) {
 		DEBUG_EXTRA("error: reference image %3u has not enough images in view", ID);
 		return false;

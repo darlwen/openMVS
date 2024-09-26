@@ -1324,10 +1324,12 @@ void DepthMapsData::FuseDepthMaps(PointCloud& pointcloud, bool bEstimateColor, b
 	bool bNormalMap(true);
 	FOREACH(i, scene.images) {
 		DepthData& depthData = arrDepthData[i];
-		if (!depthData.IsValid())
+		if (!depthData.IsValid()) {
 			continue;
-		if (depthData.IncRef(ComposeDepthFilePath(depthData.GetView().GetID(), "dmap")) == 0)
+		}
+		if (depthData.IncRef(ComposeDepthFilePath(depthData.GetView().GetID(), "dmap")) == 0) {
 			return;
+		}
 		ASSERT(!depthData.IsEmpty());
 		IndexScore& connection = connections.AddEmpty();
 		connection.idx = i;
@@ -1568,9 +1570,13 @@ bool Scene::DenseReconstruction(int nFusionMode)
 	// estimate depth-maps
 	if (!ComputeDepthMaps(data))
 		return false;
+	
+	std::cout << "DEBUG: finish ComputeDepthMaps!" << std::endl;
+
 	if (ABS(nFusionMode) == 1)
 		return true;
 
+    std::cout << "DEBUG: pointcloud size: " << pointcloud.GetSize() << std::endl;
 	// fuse all depth-maps
 	pointcloud.Release();
 	if (OPTDENSE::nMinViewsFuse < 2) {
@@ -1630,11 +1636,13 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 	}
 
 	{
+	std::cout << " ===================  maps global view indices to our list of views to be processed ====================" << std::endl;
 	// maps global view indices to our list of views to be processed
 	IIndexArr imagesMap;
 
 	// prepare images for dense reconstruction (load if needed)
 	{
+		std::cout << " ================ images size: " << images.GetSize() << "    =====================" << std::endl;
 		TD_TIMER_START();
 		data.images.Reserve(images.GetSize());
 		imagesMap.Resize(images.GetSize());
@@ -1693,7 +1701,7 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 			return false;
 		}
 		VERBOSE("Preparing images for dense reconstruction completed: %d images (%s)", images.GetSize(), TD_TIMER_GET_FMT().c_str());
-	}
+		}
 
 	// select images to be used for dense reconstruction
 	{
@@ -1717,6 +1725,7 @@ bool Scene::ComputeDepthMaps(DenseDepthMapData& data)
 				invalidIDs.InsertSort(idx);
 			}
 		}
+
 		RFOREACH(i, invalidIDs) {
 			const IIndex idx(invalidIDs[i]);
 			imagesMap[data.images.Last()] = idx;

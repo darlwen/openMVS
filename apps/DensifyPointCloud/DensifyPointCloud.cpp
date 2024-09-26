@@ -31,6 +31,7 @@
 
 #include "../../libs/MVS/Common.h"
 #include "../../libs/MVS/Scene.h"
+#include "../../libs/IO/ReadPose.h"
 #include <boost/program_options.hpp>
 
 using namespace MVS;
@@ -70,6 +71,7 @@ boost::program_options::variables_map vm;
 // initialize and parse the command line parameters
 bool Initialize(size_t argc, LPCTSTR* argv)
 {
+	std::cout << "Debug:  Enter Initialization" << std::endl;
 	// initialize log and console
 	OPEN_LOG();
 	OPEN_LOGCONSOLE();
@@ -225,6 +227,7 @@ bool Initialize(size_t argc, LPCTSTR* argv)
 	MiniDumper::Create(APPNAME, WORKING_FOLDER);
 	#endif
 
+    std::cout << "Debug:  During Initialization" << std::endl;
 	Util::Init();
 	return true;
 }
@@ -270,9 +273,18 @@ int main(int argc, LPCTSTR* argv)
 		Finalize();
 		return EXIT_SUCCESS;
 	}
+
 	// load and estimate a dense point-cloud
-	if (!scene.Load(MAKE_PATH_SAFE(OPT::strInputFileName)))
-		return EXIT_FAILURE;
+	//#define use_custom_pose
+	#ifdef use_custom_pose
+	    if(!load_scene(string(MAKE_PATH_SAFE(OPT::strInputFileName)),scene))
+	   		return EXIT_FAILURE;
+	#else
+		if (!scene.Load(MAKE_PATH_SAFE(OPT::strInputFileName)))
+			return EXIT_FAILURE;
+	#endif
+
+
 	if (!OPT::strExportROIFileName.empty() && scene.IsBounded()) {
 		std::ofstream fs(MAKE_PATH_SAFE(OPT::strExportROIFileName));
 		if (!fs)
@@ -281,6 +293,7 @@ int main(int argc, LPCTSTR* argv)
 		Finalize();
 		return EXIT_SUCCESS;
 	}
+
 	if (!OPT::strImportROIFileName.empty()) {
 		std::ifstream fs(MAKE_PATH_SAFE(OPT::strImportROIFileName));
 		if (!fs)
@@ -290,14 +303,21 @@ int main(int argc, LPCTSTR* argv)
 		Finalize();
 		return EXIT_SUCCESS;
 	}
+
+ 
 	if (!OPT::strMeshFileName.empty())
 		scene.mesh.Load(MAKE_PATH_SAFE(OPT::strMeshFileName));
+
 	if (scene.pointcloud.IsEmpty() && OPT::strViewNeighborsFileName.empty() && scene.mesh.IsEmpty()) {
 		VERBOSE("error: empty initial point-cloud");
 		return EXIT_FAILURE;
 	}
+
+
 	if (!OPT::strViewNeighborsFileName.empty())
 		scene.LoadViewNeighbors(MAKE_PATH_SAFE(OPT::strViewNeighborsFileName));
+
+
 	if (!OPT::strOutputViewNeighborsFileName.empty()) {
 		if (!scene.ImagesHaveNeighbors()) {
 			VERBOSE("error: neighbor views not computed yet");
@@ -306,6 +326,8 @@ int main(int argc, LPCTSTR* argv)
 		scene.SaveViewNeighbors(MAKE_PATH_SAFE(OPT::strOutputViewNeighborsFileName));
 		return EXIT_SUCCESS;
 	}
+
+
 	if (!OPT::strExportDepthMapsName.empty() && !scene.mesh.IsEmpty()) {
 		// project mesh onto each image and save the resulted depth-maps
 		TD_TIMER_START();
@@ -315,6 +337,8 @@ int main(int argc, LPCTSTR* argv)
 		Finalize();
 		return EXIT_SUCCESS;
 	}
+
+
 	if (OPT::fMaxSubsceneArea > 0) {
 		// split the scene in sub-scenes by maximum sampling area
 		Scene::ImagesChunkArr chunks;
@@ -323,6 +347,8 @@ int main(int argc, LPCTSTR* argv)
 		Finalize();
 		return EXIT_SUCCESS;
 	}
+
+ 
 	if (OPT::thFilterPointCloud < 0) {
 		// filter point-cloud based on camera-point visibility intersections
 		scene.PointCloudFilter(OPT::thFilterPointCloud);
@@ -332,6 +358,7 @@ int main(int argc, LPCTSTR* argv)
 		Finalize();
 		return EXIT_SUCCESS;
 	}
+
 	if (OPT::nExportNumViews && scene.pointcloud.IsValid()) {
 		// export point-cloud containing only points with N+ views
 		const String baseFileName(MAKE_PATH_SAFE(Util::getFileFullName(OPT::strOutputFileName)));
@@ -339,6 +366,7 @@ int main(int argc, LPCTSTR* argv)
 		Finalize();
 		return EXIT_SUCCESS;
 	}
+
 	if ((ARCHIVE_TYPE)OPT::nArchiveType != ARCHIVE_MVS) {
 		TD_TIMER_START();
 		if (!scene.DenseReconstruction(OPT::nFusionMode)) {
@@ -361,6 +389,7 @@ int main(int argc, LPCTSTR* argv)
 	#endif
 
 	Finalize();
+
 	return EXIT_SUCCESS;
 }
 /*----------------------------------------------------------------*/
